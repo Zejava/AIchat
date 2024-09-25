@@ -1,5 +1,5 @@
 package com.example.aichat.llm;
-
+import org.json.JSONObject;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.ContentType;
@@ -10,6 +10,9 @@ import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -26,9 +29,13 @@ import java.util.concurrent.TimeUnit;
 @AllArgsConstructor
 @Slf4j
 public class QianFanAI {
+    @Value("${ak}")
+    private static String ak;
+    @Value("${sk}")
+    private static String sk;
 
     final Gson GSON=new Gson();
-    public  double[] sentence(String sentence){
+    public  double[] sentence(String sentence) throws IOException {
 //1.组装分本块参数
         ChunkResult chunkResult=new ChunkResult();
         chunkResult.setContent(sentence);
@@ -45,7 +52,7 @@ public class QianFanAI {
      * @param chunkResults 批量文本
      * @return 向量
      */
-    public List<EmbeddingResult> embedding(List<ChunkResult> chunkResults){
+    public List<EmbeddingResult> embedding(List<ChunkResult> chunkResults) throws IOException {
         log.info("start embedding,size:{}", CollectionUtil.size(chunkResults));
         if (CollectionUtil.isEmpty(chunkResults)){
             return new ArrayList<>();
@@ -63,7 +70,7 @@ public class QianFanAI {
      * @param chunkResult
      * @return
      */
-    public EmbeddingResult embedding(ChunkResult chunkResult) {
+    public EmbeddingResult embedding(ChunkResult chunkResult) throws IOException {
  //1.构建http请求
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .connectTimeout(20000, TimeUnit.MILLISECONDS)
@@ -82,7 +89,7 @@ public class QianFanAI {
         map1.put("input", list);
         // 3.向发起千帆embedding发起向量化请求
         Request request = new Request.Builder()
-                .url("https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/embeddings/embedding-v1?access_token=")
+                .url("https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/embeddings/embedding-v1?access_token="+getAccessToken())
                 .post(RequestBody.create(MediaType.parse(ContentType.JSON.getValue()), JSONUtil.toJsonStr(map1)))
                 .build();
         try {
@@ -143,7 +150,7 @@ public class QianFanAI {
             RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONUtil.toJsonStr(messagesRequest));
             //构造请求
             Request request = new Request.Builder()
-                    .url("https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions_pro?access_token=24.0c12923c426ded6a5b2eda7a4552afec.2592000.1729484251.282335-115650918")
+                    .url("https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions_pro?access_token="+getAccessToken())
                     .method("POST", body)
                     .addHeader("Content-Type", "application/json")
                     .build();
@@ -186,6 +193,31 @@ public class QianFanAI {
         } catch (Exception e) {
             log.error("llm-chat异常：{}", e.getMessage());
         }
+    }
+    /**
+     * 从用户的AK，SK生成鉴权签名（Access Token）
+     *
+     * @return 鉴权签名（Access Token）
+     * @throws IOException IO异常
+     */
+    @Autowired
+    static String getAccessToken() throws IOException {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .connectTimeout(20000, TimeUnit.MILLISECONDS)
+                .readTimeout(20000, TimeUnit.MILLISECONDS)
+                .writeTimeout(20000, TimeUnit.MILLISECONDS);
+        OkHttpClient okHttpClient = builder.build();
+        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+        RequestBody body = RequestBody.create(mediaType, "grant_type=client_credentials&client_id=" + ak
+                + "&client_secret=" + sk);
+        Request request = new Request.Builder()
+                .url("https://aip.baidubce.com/oauth/2.0/token")
+                .method("POST", body)
+                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                .build();
+        Response response = okHttpClient.newCall(request).execute();
+        String accessToken = new JSONObject(response.body().string()).getString("access_token");
+        return accessToken;
     }
 
 }

@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
+import java.io.IOException;
+
 /**
  * @Author 泽
  */
@@ -22,7 +24,7 @@ public class ChatCommand {
     final QianFanAI qianFanAI;
 
     @ShellMethod(value = "chat with files")
-    public String chat(String question){
+    public String chat(String question) throws IOException {
         if (StrUtil.isBlank(question)){
             return "You must send a question";
         }
