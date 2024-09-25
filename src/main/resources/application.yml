@@ -1,0 +1,10 @@
+spring:
+  application:
+   name: AiChat
+  elasticsearch:
+    uris:
+  shell:
+    history:
+      name: test
+    theme:
+      name: aaa
