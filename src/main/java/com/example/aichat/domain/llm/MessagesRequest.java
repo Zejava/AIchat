@@ -7,6 +7,7 @@ import java.util.List;
 /**
  * @Author 泽
  * @Date 2024/9/23 8:45
+ * 传给问答大模型的参数
  */
 @Data
 public class MessagesRequest {

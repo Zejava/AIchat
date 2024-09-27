@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 /**
  * @Author 泽
  * @Date 2024/9/27 11:07
+ * 通过这个类获得ak和sk
  */
 @Data
 @Component

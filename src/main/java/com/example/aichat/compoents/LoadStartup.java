@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * @Author 泽
+ * 初始化ES中的索引
  */
 @AllArgsConstructor
 @Component

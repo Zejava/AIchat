@@ -1,5 +1,6 @@
-package com.example.aichat.domain.llm;
+package com.example.aichat.domain.Prompt;
 
+import com.example.aichat.domain.Prompt.Result;
 import lombok.Data;
 
 /**

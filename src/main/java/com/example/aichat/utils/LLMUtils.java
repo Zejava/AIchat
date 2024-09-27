@@ -11,11 +11,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 
-import cn.hutool.http.ContentType;
 import cn.hutool.json.JSONUtil;
 import com.example.aichat.Configration.LLMProperties;
-import com.example.aichat.domain.llm.PromptResponse;
-import com.example.aichat.domain.llm.QianFanResult;
+import com.example.aichat.domain.Prompt.PromptResponse;
 import lombok.AllArgsConstructor;
 import okhttp3.*;
 import org.json.JSONObject;

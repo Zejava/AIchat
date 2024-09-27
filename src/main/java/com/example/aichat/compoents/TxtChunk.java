@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Author 泽
+ * 对不同类型的文本进行分块
  */
 @Slf4j
 @Component

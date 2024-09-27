@@ -29,6 +29,7 @@ import java.util.*;
 
 /**
  * @Author 泽
+ * 对分块文本进行存储以及向量召回的实体类
  */
 @Slf4j
 @Component

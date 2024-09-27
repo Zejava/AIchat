@@ -6,6 +6,7 @@ import lombok.Setter;
 
 /**
  * @Author 泽
+ * 文本和提问进行向量化返回的实体类
  */
 @Getter
 @Setter

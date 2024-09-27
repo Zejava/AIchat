@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @Author 泽
  * @Date 2024/9/21 14:07
+ * 在这个类里面对向量进行向量化以及问答实现等
  */
 @Component
 @AllArgsConstructor
@@ -35,7 +36,7 @@ public class QianFanAI {
 
     final Gson GSON=new Gson();
     public  double[] sentence(String sentence) throws IOException {
-//1.组装分本块参数
+//1.组装分块文本参数
         ChunkResult chunkResult=new ChunkResult();
         chunkResult.setContent(sentence);
         chunkResult.setChunkId(RandomUtil.randomInt());
@@ -86,20 +87,20 @@ public class QianFanAI {
         List<String> list = new ArrayList<String>();
         list.add(embedRequest.getPrompt());
         map1.put("input", list);
-        // 3.向发起千帆embedding发起向量化请求
+        // 4.向发起千帆embedding发起向量化请求
         Request request = new Request.Builder()
                 .url("https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/embeddings/embedding-v1?access_token="+getAccessToken())
                 .post(RequestBody.create(MediaType.parse(ContentType.JSON.getValue()), JSONUtil.toJsonStr(map1)))
                 .build();
         try {
-            //4.处理响应回来的参数
+            //5.处理响应回来的参数
             Response response = okHttpClient.newCall(request).execute();
             String result = response.body().string();
             QianFanResult qianFanResult = GSON.fromJson(result, QianFanResult.class);
             EmbeddingResult ret= new EmbeddingResult();
 
             List<EmbeddingData> data = qianFanResult.getData();
-            //将得到的向量化数据存入一个double数组中
+            //6.将得到的向量化数据转存入一个double数组中
             int totalSize = 0;
             for (EmbeddingData embeddingData : data) {
                 totalSize += embeddingData.getEmbedding().size();
@@ -127,27 +128,27 @@ public class QianFanAI {
     }
     public void chat(String prompt){
         try {
-            //http客户端创建
+            //1.http客户端创建
             OkHttpClient.Builder builder = new OkHttpClient.Builder()
                     .connectTimeout(20000, TimeUnit.MILLISECONDS)
                     .readTimeout(20000, TimeUnit.MILLISECONDS)
                     .writeTimeout(20000, TimeUnit.MILLISECONDS);
             OkHttpClient okHttpClient = builder.build();
-            //组装Message参数
+            //2.组装Message参数
             Message message = new Message();
             message.setRole("user");
             message.setContent(prompt);
             List<Message> messages = new ArrayList<>();
             messages.add(message);
-            //组装MessagesRequest参数
+            //3.组装MessagesRequest参数
             MessagesRequest messagesRequest = new MessagesRequest();
             messagesRequest.setMessages(messages);
             messagesRequest.setTemperature(0.7f);
             messagesRequest.setTop_p(0.7f);
             messagesRequest.setStream(true);
-            //构造请求body
+            //4.构造请求body
             RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONUtil.toJsonStr(messagesRequest));
-            //构造请求
+            //5.构造请求
             Request request = new Request.Builder()
                     .url("https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions_pro?access_token="+getAccessToken())
                     .method("POST", body)
@@ -156,7 +157,7 @@ public class QianFanAI {
 
 
 
-            //获得请求后将其进行流式输出的相关代码
+            //6.获得请求后将其进行流式输出的相关代码
             Response response = okHttpClient.newCall(request).execute();
             try (ResponseBody responseBody = response.body()) {
                 if (responseBody != null) {

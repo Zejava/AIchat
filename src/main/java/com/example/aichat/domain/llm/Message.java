@@ -3,6 +3,7 @@ package com.example.aichat.domain.llm;
 /**
  * @Author 泽
  * @Date 2024/9/23 8:45
+ * 提问的参数
  */
 public class Message {
     private String role;
