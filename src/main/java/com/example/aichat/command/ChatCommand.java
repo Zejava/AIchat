@@ -11,6 +11,7 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * @Author 泽
@@ -22,9 +23,10 @@ public class ChatCommand {
 
     final VectorStorage vectorStorage;
     final QianFanAI qianFanAI;
+    final LLMUtils llmUtils;
 
     @ShellMethod(value = "chat with files")
-    public String chat(String question) throws IOException {
+    public String chat(String question) throws IOException, URISyntaxException {
         if (StrUtil.isBlank(question)){
             return "You must send a question";
         }
@@ -37,7 +39,7 @@ public class ChatCommand {
             return "No Answer!";
         }
         // 构建Prompt
-        String prompt= LLMUtils.buildPrompt(question,vectorData);
+        String prompt= llmUtils.buildPrompt(question,vectorData);
 //        zhipuAI.chat(prompt);
         qianFanAI.chat(prompt);
         // 大模型对话

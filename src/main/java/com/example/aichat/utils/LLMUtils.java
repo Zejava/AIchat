@@ -1,47 +1,83 @@
 package com.example.aichat.utils;
+//import cn.hutool.json.JSONUtil;
+//import com.baidubce.auth.BceV1Signer;
+//import com.baidubce.auth.DefaultBceCredentials;
+//import com.baidubce.auth.SignOptions;
+//import com.baidubce.http.HttpMethodName;
+//import com.baidubce.internal.InternalRequest;
+//import com.baidubce.util.DateUtils;
 
-import cn.hutool.jwt.JWTUtil;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.concurrent.TimeUnit;
 
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import cn.hutool.http.ContentType;
+import cn.hutool.json.JSONUtil;
+import com.example.aichat.Configration.LLMProperties;
+import com.example.aichat.domain.llm.PromptResponse;
+import com.example.aichat.domain.llm.QianFanResult;
+import lombok.AllArgsConstructor;
+import okhttp3.*;
+import org.json.JSONObject;
+import org.springframework.stereotype.Component;
+
+import com.google.gson.Gson;
 
 /**
- * @author <a href="xiaoymin@foxmail.com">xiaoymin@foxmail.com</a>
- * 2023/10/06 13:42
- * @since llm_chat_java_hello
+ * @Author 泽
  */
+@AllArgsConstructor
+@Component
 public class LLMUtils {
+    final LLMProperties llmProperties;
+    final Gson GSON = new Gson();
 
+    public String buildPrompt(String question, String context) throws URISyntaxException, IOException {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .connectTimeout(20000, TimeUnit.MILLISECONDS)
+                .readTimeout(20000, TimeUnit.MILLISECONDS)
+                .writeTimeout(20000, TimeUnit.MILLISECONDS);
+        OkHttpClient okHttpClient = builder.build();
+        String jsonStr = JSONUtil.toJsonStr(question);
+        String jsonStr1 = JSONUtil.toJsonStr(context);
 
-    public static String buildPrompt(String question,String context){
-        return "请利用如下上下文的信息回答问题：" + "\n" +
-                question + "\n" +
-                "上下文信息如下：" + "\n" +
-                context + "\n" +
-                "如果上下文信息中没有帮助,则不允许胡乱回答！";
+        Request request = new Request.Builder()
+                .url("https://aip.baidubce.com/rest/2.0/wenxinworkshop/api/v1/template/info?access_token="
+                        +getAccessToken()+"&id=pt-b29dmev1dcxufytd"+
+                        "&question="+jsonStr+"&context="+jsonStr1)
+
+                .addHeader("Content-Type","application/json")
+                .build();
+
+        Response response = okHttpClient.newCall(request).execute();
+        String result = response.body().string();
+        PromptResponse promptResponse = GSON.fromJson(result, PromptResponse.class);
+        String content = promptResponse.getResult().getContent();
+        return content;
     }
+    /**
+     * 从用户的AK，SK生成鉴权签名（Access Token）
+     *
+     * @return 鉴权签名（Access Token）
+     * @throws IOException IO异常
+     */
 
-    public static String gen(String apiKey, int expSeconds) {
-        String[] parts = apiKey.split("\\.");
-        if (parts.length != 2) {
-            throw new RuntimeException("智谱invalid key");
-        }
-
-        String id = parts[0];
-        String secret = parts[1];
-        // 4143f0fa36f0aaf39a63be11a3623c63.eMhlXYJLdUGQO0xH
-        Map<String, Object> payload = new HashMap<>();
-        long currentTimeMillis = System.currentTimeMillis();
-        long expirationTimeMillis = currentTimeMillis + (60 * 1000);
-        payload.put("api_key", id);
-        payload.put("exp", expirationTimeMillis);
-        payload.put("timestamp", currentTimeMillis);
-        Map<String, Object> headerMap = new HashMap<>();
-        headerMap.put("alg", "HS256");
-        headerMap.put("sign_type", "SIGN");
-        return JWTUtil.createToken(headerMap,payload,secret.getBytes(StandardCharsets.UTF_8));
+    String getAccessToken() throws IOException {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .connectTimeout(20000, TimeUnit.MILLISECONDS)
+                .readTimeout(20000, TimeUnit.MILLISECONDS)
+                .writeTimeout(20000, TimeUnit.MILLISECONDS);
+        OkHttpClient okHttpClient = builder.build();
+        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+        RequestBody body = RequestBody.create(mediaType, "grant_type=client_credentials&client_id=" + llmProperties.getAk()
+                + "&client_secret=" + llmProperties.getSk());
+        Request request = new Request.Builder()
+                .url("https://aip.baidubce.com/oauth/2.0/token")
+                .method("POST", body)
+                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                .build();
+        Response response = okHttpClient.newCall(request).execute();
+        String accessToken = new JSONObject(response.body().string()).getString("access_token");
+        return accessToken;
     }
-
-
 }
