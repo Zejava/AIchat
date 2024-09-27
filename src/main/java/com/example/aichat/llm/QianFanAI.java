@@ -1,4 +1,5 @@
 package com.example.aichat.llm;
+import com.example.aichat.Configration.LLMProperties;
 import org.json.JSONObject;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.RandomUtil;
@@ -29,10 +30,8 @@ import java.util.concurrent.TimeUnit;
 @AllArgsConstructor
 @Slf4j
 public class QianFanAI {
-    @Value("${ak}")
-    private static String ak;
-    @Value("${sk}")
-    private static String sk;
+    final LLMProperties llmProperties;
+
 
     final Gson GSON=new Gson();
     public  double[] sentence(String sentence) throws IOException {
@@ -155,10 +154,7 @@ public class QianFanAI {
                     .addHeader("Content-Type", "application/json")
                     .build();
 
-//            Response response = okHttpClient.newCall(request).execute();
-//            String result = response.body().string();
-//            Data qianFanResult = GSON.fromJson(result, Data.class);
-//            System.out.println(qianFanResult.getResult());
+
 
             //获得请求后将其进行流式输出的相关代码
             Response response = okHttpClient.newCall(request).execute();
@@ -200,16 +196,16 @@ public class QianFanAI {
      * @return 鉴权签名（Access Token）
      * @throws IOException IO异常
      */
-    @Autowired
-    static String getAccessToken() throws IOException {
+
+    String getAccessToken() throws IOException {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .connectTimeout(20000, TimeUnit.MILLISECONDS)
                 .readTimeout(20000, TimeUnit.MILLISECONDS)
                 .writeTimeout(20000, TimeUnit.MILLISECONDS);
         OkHttpClient okHttpClient = builder.build();
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        RequestBody body = RequestBody.create(mediaType, "grant_type=client_credentials&client_id=" + ak
-                + "&client_secret=" + sk);
+        RequestBody body = RequestBody.create(mediaType, "grant_type=client_credentials&client_id=" + llmProperties.getAk()
+                + "&client_secret=" + llmProperties.getSk());
         Request request = new Request.Builder()
                 .url("https://aip.baidubce.com/oauth/2.0/token")
                 .method("POST", body)
