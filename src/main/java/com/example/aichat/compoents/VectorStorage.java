@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
 
-import com.example.aichat.domain.llm.EmbeddingResult;
+import com.example.aichat.domain.Embedding.EmbeddingResult;
 import com.example.aichat.domain.store.ElasticVectorData;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.example.aichat.domain.llm;
+package com.example.aichat.domain.Embedding;
 
 import lombok.Getter;
 import lombok.Setter;

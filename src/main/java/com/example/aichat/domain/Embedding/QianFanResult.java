@@ -1,4 +1,4 @@
-package com.example.aichat.domain.llm;
+package com.example.aichat.domain.Embedding;
 
 import com.baidubce.qianfan.model.embedding.EmbeddingData;
 import lombok.Data;

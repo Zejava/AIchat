@@ -1,5 +1,7 @@
 package com.example.aichat.llm;
 import com.example.aichat.Configration.LLMProperties;
+import com.example.aichat.domain.Embedding.EmbeddingResult;
+import com.example.aichat.domain.Embedding.QianFanResult;
 import org.json.JSONObject;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.RandomUtil;
@@ -11,9 +13,6 @@ import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -138,7 +137,8 @@ public class QianFanAI {
      * 访问LLM大模型
      * @param prompt
      */
-    public void chat(String prompt){
+    public List<String> chat(String prompt){
+        List<String> res = new ArrayList<>();
         try {
             //1.http客户端创建
             OkHttpClient.Builder builder = new OkHttpClient.Builder()
@@ -191,9 +191,8 @@ public class QianFanAI {
 
                             // 提取 "result" 字段的值
                             String result = jsonObject.getResult();
-
-                            // 输出结果
-                            System.out.print(result); // 输出: 根据原文
+                            res.add(result);
+                            // 输出结果/ 输出: 根据原文
                         }
                     }
                 }
@@ -201,7 +200,7 @@ public class QianFanAI {
 
         } catch (Exception e) {
             log.error("llm-chat异常：{}", e.getMessage());
-        }
+        }return res;
     }
     /**
      * 从用户的AK，SK生成鉴权签名（Access Token）
