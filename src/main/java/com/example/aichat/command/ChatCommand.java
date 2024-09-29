@@ -7,6 +7,8 @@ import com.example.aichat.llm.QianFanAI;
 import com.example.aichat.utils.LLMUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
 //import org.springframework.shell.standard.ShellComponent;
 //import org.springframework.shell.standard.ShellMethod;
 
@@ -18,14 +20,14 @@ import java.net.URISyntaxException;
  */
 @AllArgsConstructor
 @Slf4j
-//@ShellComponent
+@ShellComponent
 public class ChatCommand {
 
     final VectorStorage vectorStorage;
     final QianFanAI qianFanAI;
     final LLMUtils llmUtils;
 
-//    @ShellMethod(value = "chat with files")
+    @ShellMethod(value = "chat with files")
     public String chat(String question) throws IOException, URISyntaxException {
         if (StrUtil.isBlank(question)){
             return "You must send a question";

@@ -18,18 +18,18 @@ public class LoadStartup implements InitializingBean {
 
 
     public void startup(){
-        log.info("init vector collection");
+        log.info("初始化向量集合");
         String collectionName= vectorStorage.getCollectionName();
         log.info("init collection:{}",collectionName);
         //向量维度固定384，根据选择的向量Embedding模型的维度确定最终维度
         // 这里因为选择千帆的Embedding模型，维度是384，所以固定为该值
         vectorStorage.initCollection(collectionName,384);
-        log.info("init collection success.");
+        log.info("初始化向量集合成功。");
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        log.info("start load.....");
+        log.info("开始加载");
         this.startup();
     }
 }

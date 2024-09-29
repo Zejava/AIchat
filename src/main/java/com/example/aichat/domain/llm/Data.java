@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * @Author 泽
  * @Date 2024/9/23 9:28
- * 问答大模型返回的id和result（内容）
+ * 问答大模型返回的id和result（内容），根据百度官方文档设计
  */
 @lombok.Data
 

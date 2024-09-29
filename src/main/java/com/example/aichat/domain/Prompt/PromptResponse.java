@@ -6,6 +6,7 @@ import lombok.Data;
 /**
  * @Author 泽
  * @Date 2024/9/27 16:15
+ * prompt接口传回的参数
  */
 @Data
 public class PromptResponse {

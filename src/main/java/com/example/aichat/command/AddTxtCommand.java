@@ -8,8 +8,9 @@ import com.example.aichat.domain.llm.EmbeddingResult;
 import com.example.aichat.llm.QianFanAI;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-//import org.springframework.shell.standard.ShellComponent;
-//import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+
 
 import java.util.List;
 
@@ -19,21 +20,21 @@ import java.util.List;
  */
 @Slf4j
 @AllArgsConstructor
-//@ShellComponent
+@ShellComponent
 public class AddTxtCommand {
 
     final TxtChunk txtChunk;
     final VectorStorage vectorStorage;
     final QianFanAI qianFanAI;
 
-//    @ShellMethod(value = "add local txt data")
+    @ShellMethod(value = "add local txt data")
     public String add(String doc,String fileType) throws Exception {
 
         // 加载
         List<ChunkResult> chunkResults= txtChunk.chunk(doc,fileType);
-        // embedding
+        // 向量化
         List<EmbeddingResult> embeddingResults= qianFanAI.embedding(chunkResults);
-        // store vector
+        // 存储向量化数据进ES
         String collection= vectorStorage.getCollectionName();
         vectorStorage.store(collection,embeddingResults);
         log.info("finished");

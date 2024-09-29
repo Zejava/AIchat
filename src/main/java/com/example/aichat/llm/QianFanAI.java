@@ -35,6 +35,13 @@ public class QianFanAI {
 
 
     final Gson GSON=new Gson();
+
+    /**
+     * 对问题进行向量化
+     * @param sentence
+     * @return
+     * @throws IOException
+     */
     public  double[] sentence(String sentence) throws IOException {
 //1.组装分块文本参数
         ChunkResult chunkResult=new ChunkResult();
@@ -48,7 +55,7 @@ public class QianFanAI {
 
 
     /**
-     * 批量
+     * 批量向量化
      * @param chunkResults 批量文本
      * @return 向量
      */
@@ -66,7 +73,7 @@ public class QianFanAI {
     }
 
     /**
-     * 对文本块的向量化
+     * 对单个文本块的向量化
      * @param chunkResult
      * @return
      */
@@ -126,6 +133,11 @@ public class QianFanAI {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * 访问LLM大模型
+     * @param prompt
+     */
     public void chat(String prompt){
         try {
             //1.http客户端创建

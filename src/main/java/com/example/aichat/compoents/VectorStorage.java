@@ -70,6 +70,12 @@ public class VectorStorage {
         }
         return true;
 }
+
+    /**
+     * 这里是用来村粗向量化数据进ES的
+     * @param collectionName
+     * @param embeddingResults
+     */
     public void store(String collectionName,List<EmbeddingResult> embeddingResults){
         //保存向量
         log.info("save vector,collection:{},size:{}",collectionName, CollectionUtil.size(embeddingResults));
@@ -87,6 +93,13 @@ public class VectorStorage {
         int size = CollectionUtil.size(bulkedResult);
         log.info("保存向量成功-size:{}", size);
     }
+
+    /**
+     * 这里是执行向量召回的，根据问题召回ES中相关度比较高的文档内容
+     * @param collectionName ES索引名
+     * @param vector 向量化的集合
+     * @return
+     */
 
     public String retrieval(String collectionName,double[] vector){
         // Build the script,查询向量
