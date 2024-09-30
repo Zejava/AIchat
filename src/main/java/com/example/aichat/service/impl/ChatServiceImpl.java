@@ -6,6 +6,7 @@ import com.example.aichat.llm.QianFanAI;
 import com.example.aichat.service.ChatService;
 import com.example.aichat.utils.LLMUtils;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,7 @@ public class ChatServiceImpl implements ChatService {
 
 
     @Override
-    public List<String> chat(String question) throws URISyntaxException, IOException {
+    public List<String> chat(String question) throws IOException, URISyntaxException {
         if (StrUtil.isBlank(question)){
             return new ArrayList<>();
         }

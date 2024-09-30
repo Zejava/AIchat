@@ -35,10 +35,9 @@ import java.util.*;
 @Component
 @AllArgsConstructor
 public class VectorStorage {
-    @Autowired
-    private RestHighLevelClient client;
 
     final ElasticsearchRestTemplate elasticsearchRestTemplate;
+    final static double filterDocumentParameters = 1.5;
 
     public String getCollectionName() {
         //演示效果使用，固定前缀+日期
@@ -111,12 +110,13 @@ public class VectorStorage {
         // 构建请求
         NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
                 .withQuery(scriptScoreQueryBuilder)
-                .withPageable(Pageable.ofSize(3)).build();
+                .withPageable(Pageable.ofSize(10000)).build();//这里的参数控制返回文档的数量
         SearchHits<ElasticVectorData> dataSearchHits = this.elasticsearchRestTemplate.search(nativeSearchQuery, ElasticVectorData.class, IndexCoordinates.of(collectionName));
         //log.info("检索成功，size:{}", dataSearchHits.getTotalHits());
         List<SearchHit<ElasticVectorData>> data = dataSearchHits.getSearchHits();
         List<String> results = new LinkedList<>();
         for (SearchHit<ElasticVectorData> ele : data) {
+            if(ele.getScore() <=filterDocumentParameters)
             results.add(ele.getContent().getContent());
         }
         return CollectionUtil.join(results,"");

@@ -23,7 +23,7 @@ public class ChatController {
     private ChatService chatService;
     @ApiOperation(value = "提问大模型",httpMethod = "POST")
     @RequestMapping("/qianfan")
-    public List<String> chat(String question) throws URISyntaxException, IOException {
+    public List<String> chat(String question) throws Exception {
         List<String>  chat= chatService.chat(question);
         return chat;
     }

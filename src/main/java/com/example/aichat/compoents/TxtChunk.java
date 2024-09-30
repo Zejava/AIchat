@@ -37,6 +37,9 @@ public class TxtChunk {
      */
 
     public List<ChunkResult> chunk(String docId, String fileType) throws IOException {
+        List<ChunkResult> results = new ArrayList<>();
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+
         String path = "data/" + docId + "." + fileType;
         if (fileType.equals("txt")) {//处理txt文件
             log.info("start chunk---> docId:{},path:{}", docId, path);
@@ -46,8 +49,7 @@ public class TxtChunk {
                 //按固定字数分割,96
                 String[] lines = StrUtil.split(txt, 96);
                 log.info("chunk size:{}", ArrayUtil.length(lines));
-                List<ChunkResult> results = new ArrayList<>();
-                AtomicInteger atomicInteger = new AtomicInteger(0);
+
                 for (String line : lines) {
                     ChunkResult chunkResult = new ChunkResult();
                     chunkResult.setDocId(docId);
@@ -61,27 +63,27 @@ public class TxtChunk {
             }
         } else if (fileType.equals("docx")) {//处理docx文件
             ClassPathResource classPathResource = new ClassPathResource(path);
-            List<ChunkResult> results = new ArrayList<>();
+
             try (InputStream inputStream = classPathResource.getInputStream();
                  XWPFDocument document = new XWPFDocument(inputStream)) {
 
                 for (XWPFParagraph para : document.getParagraphs()) {
                     String text = para.getText();
                     if (!text.isEmpty()) {
-                        ChunkResult chunkResult = new ChunkResult();
-                        chunkResult.setDocId(docId);
-                        chunkResult.setContent(text);
-                        // 这里假设ChunkId是基于段落索引的（或者你可以使用其他逻辑）
-                        chunkResult.setChunkId(results.size() + 1);
-                        results.add(chunkResult);
+                        String[] lines = StrUtil.split(text, 96);
+                        for (String line : lines) {
+                            ChunkResult chunkResult = new ChunkResult();
+                            chunkResult.setDocId(docId);
+                            chunkResult.setContent(line);
+                            chunkResult.setChunkId(atomicInteger.incrementAndGet());
+                            results.add(chunkResult);
+                        }
                     }
                 }
             }
             return results;
         } else {
             ClassPathResource classPathResource = new ClassPathResource(path);
-            List<ChunkResult> results = new ArrayList<>();
-
             try (InputStream inputStream = classPathResource.getInputStream();
                  Workbook workbook = new XSSFWorkbook(inputStream)) {
 
