@@ -37,12 +37,10 @@ public class LLMUtils {
                 .writeTimeout(20000, TimeUnit.MILLISECONDS);
         OkHttpClient okHttpClient = builder.build();
         String jsonStr = JSONUtil.toJsonStr(question);
-        String jsonStr1 = JSONUtil.toJsonStr(context);
-
         Request request = new Request.Builder()
                 .url("https://aip.baidubce.com/rest/2.0/wenxinworkshop/api/v1/template/info?access_token="
                         +getAccessToken()+"&id=pt-b29dmev1dcxufytd"+
-                        "&question="+jsonStr+"&context="+jsonStr1)
+                        "&question="+jsonStr)
 
                 .addHeader("Content-Type","application/json")
                 .build();
@@ -50,8 +48,8 @@ public class LLMUtils {
         Response response = okHttpClient.newCall(request).execute();
         String result = response.body().string();
         PromptResponse promptResponse = GSON.fromJson(result, PromptResponse.class);
-        String content = promptResponse.getResult().getContent();
-        return content;
+        String InitPrompt = promptResponse.getResult().getContent();
+        return InitPrompt+context;
     }
     /**
      * 从用户的AK，SK生成鉴权签名（Access Token）
