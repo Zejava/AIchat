@@ -22,8 +22,8 @@ public class ImportKnowledgeController {
     private ImportKnowledgeService importKnowledgeService;
     @ApiOperation(value = "导入知识库进ES",httpMethod = "POST")
     @RequestMapping("/import")
-    public String Import(String FileName,String fileType) throws IOException {
-        String anImport = importKnowledgeService.Import(FileName, fileType);
+    public String Import(String FileName,String fileType,String esIndexName) throws IOException {
+        String anImport = importKnowledgeService.Import(FileName, fileType,esIndexName);
         return anImport;
     }
 }

@@ -31,15 +31,14 @@ public class ChatServiceImpl implements ChatService {
 
 
     @Override
-    public List<String> chat(String question) throws IOException, URISyntaxException {
+    public List<String> chat(String question,String esIndexName) throws IOException, URISyntaxException {
         if (StrUtil.isBlank(question)){
             return new ArrayList<>();
         }
         //句子转向量
         double[] vector=qianFanAI.sentence(question);
         // 向量召回
-        String collection= vectorStorage.getCollectionName();
-        String vectorData=vectorStorage.retrieval(collection,vector);
+        String vectorData=vectorStorage.retrieval(esIndexName,vector);
         if (StrUtil.isBlank(vectorData)){
             return new ArrayList<>();
         }

@@ -23,8 +23,8 @@ public class ChatController {
     private ChatService chatService;
     @ApiOperation(value = "提问大模型",httpMethod = "POST")
     @RequestMapping("/qianfan")
-    public List<String> chat(String question) throws Exception {
-        List<String>  chat= chatService.chat(question);
+    public List<String> chat(String question,String esIndexName) throws Exception {
+        List<String>  chat= chatService.chat(question,esIndexName);
         return chat;
     }
 }

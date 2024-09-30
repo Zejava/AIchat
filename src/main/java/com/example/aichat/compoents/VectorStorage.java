@@ -46,29 +46,6 @@ public class VectorStorage {
 
     private static final String DEFAULT_MAPPING = "{...}";
 
-    /**
-     * 初始化向量数据库index
-     *
-     * @param collectionName 名称
-     * @param dim            维度
-     */
-    public boolean initCollection(String collectionName, int dim) {
-
-
-        log.info("collection:{}", collectionName);
-        // 查看向量索引是否存在，此方法为固定默认索引字段
-        IndexOperations indexOperations = elasticsearchRestTemplate.indexOps(IndexCoordinates.of(collectionName));
-        if (!indexOperations.exists()) {
-            // 索引不存在，直接创建
-            log.info("index not exists,create");
-            //创建es的结构，简化处理
-            Document document = Document.from(this.elasticMapping(dim));
-            // 创建
-            indexOperations.create(new HashMap<>(), document);
-            return true;
-        }
-        return true;
-}
 
     /**
      * 这里是用来村粗向量化数据进ES的
@@ -120,19 +97,6 @@ public class VectorStorage {
             results.add(ele.getContent().getContent());
         }
         return CollectionUtil.join(results,"");
-    }
-
-    private Map<String, Object> elasticMapping(int dims) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("_class", MapUtil.builder("type", "keyword").put("doc_values", "false").put("index", "false").build());
-        properties.put("chunkId", MapUtil.builder("type", "keyword").build());
-        properties.put("content", MapUtil.builder("type", "keyword").build());
-        properties.put("docId", MapUtil.builder("type", "keyword").build());
-        // 向量
-        properties.put("vector", MapUtil.builder("type", "dense_vector").put("dims", Objects.toString(dims)).build());
-        Map<String, Object> root = new HashMap<>();
-        root.put("properties", properties);
-        return root;
     }
 
 }

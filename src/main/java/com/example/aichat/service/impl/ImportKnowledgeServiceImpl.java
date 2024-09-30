@@ -6,6 +6,7 @@ import com.example.aichat.domain.llm.ChunkResult;
 import com.example.aichat.domain.Embedding.EmbeddingResult;
 import com.example.aichat.llm.QianFanAI;
 import com.example.aichat.service.ImportKnowledgeService;
+import com.example.aichat.utils.EsIndexUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,12 +27,16 @@ public class ImportKnowledgeServiceImpl implements ImportKnowledgeService {
     private  VectorStorage vectorStorage;
     @Autowired
     private QianFanAI qianFanAI;
+    @Autowired
+    private EsIndexUtils esIndexUtils;
     @Override
-    public String Import(String FileName, String fileType) throws IOException {
+    public String Import(String FileName, String fileType,String esIndexName) throws IOException {
         // 加载
         List<ChunkResult> chunkResults= txtChunk.chunk(FileName,fileType);
         // 向量化
         List<EmbeddingResult> embeddingResults= qianFanAI.embedding(chunkResults);
+        //初始化索引
+        boolean success = esIndexUtils.CreateIndex(esIndexName);
         // 存储向量化数据进ES
         String collection= vectorStorage.getCollectionName();
         vectorStorage.store(collection,embeddingResults);

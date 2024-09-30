@@ -8,5 +8,5 @@ import java.io.IOException;
  */
 
 public interface ImportKnowledgeService {
-    public String Import(String FileName,String fileType) throws IOException;
+    public String Import(String FileName,String fileType,String esIndexName) throws IOException;
 }
