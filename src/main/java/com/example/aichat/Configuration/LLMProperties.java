@@ -1,4 +1,4 @@
-package com.example.aichat.Configration;
+package com.example.aichat.Configuration;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

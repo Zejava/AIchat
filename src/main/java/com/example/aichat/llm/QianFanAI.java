@@ -1,5 +1,5 @@
 package com.example.aichat.llm;
-import com.example.aichat.Configration.LLMProperties;
+import com.example.aichat.Configuration.LLMProperties;
 import com.example.aichat.domain.Embedding.EmbeddingResult;
 import com.example.aichat.domain.Embedding.QianFanResult;
 import org.json.JSONObject;

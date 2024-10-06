@@ -18,6 +18,7 @@ import java.util.Objects;
 /**
  * @Author 泽
  * @Date 2024/9/30 11:05
+ * 创建ES索引相关的类
  */
 @Component
 @Slf4j

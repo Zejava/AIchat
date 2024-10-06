@@ -9,5 +9,5 @@ import java.util.List;
  * @Date 2024/9/29 9:35
  */
 public interface ChatService {
-    public List<String> chat(String question,String esIndexName) throws Exception;
+    public List<String> chat(String question,String[] esIndexName) throws Exception;
 }

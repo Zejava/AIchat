@@ -31,21 +31,24 @@ public class ChatServiceImpl implements ChatService {
 
 
     @Override
-    public List<String> chat(String question,String esIndexName) throws IOException, URISyntaxException {
+    public List<String> chat(String question,String[] esIndexNames) throws IOException, URISyntaxException {
         if (StrUtil.isBlank(question)){
             return new ArrayList<>();
         }
         //句子转向量
         double[] vector=qianFanAI.sentence(question);
         // 向量召回
-        String vectorData=vectorStorage.retrieval(esIndexName,vector);
-        if (StrUtil.isBlank(vectorData)){
+        StringBuilder Data = new StringBuilder();
+        for(String esIndexName : esIndexNames){
+            String vectorData=vectorStorage.retrieval(esIndexName,vector);
+            Data.append(vectorData);
+        }
+        if (StrUtil.isBlank(Data)){
             return new ArrayList<>();
         }
         // 构建Prompt
-        String prompt= llmUtils.buildPrompt(question,vectorData);
-        List<String> chat = qianFanAI.chat(prompt);
+        String prompt= llmUtils.buildPrompt(question, String.valueOf(Data));
         // 大模型对话
-        return chat;
+        return qianFanAI.chat(prompt);
     }
 }

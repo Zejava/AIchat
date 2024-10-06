@@ -93,7 +93,9 @@ public class VectorStorage {
         List<SearchHit<ElasticVectorData>> data = dataSearchHits.getSearchHits();
         List<String> results = new LinkedList<>();
         for (SearchHit<ElasticVectorData> ele : data) {
-            if(ele.getScore() <=filterDocumentParameters)
+            if(ele.getScore() <=filterDocumentParameters){
+                continue;
+            }
             results.add(ele.getContent().getContent());
         }
         return CollectionUtil.join(results,"");
