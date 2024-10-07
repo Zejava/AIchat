@@ -4,10 +4,3 @@ spring:
       matching-strategy: ant_path_matcher
   application:
    name: AiChat
-  elasticsearch:
-    uris:
-  shell:
-    history:
-      name: test
-    theme:
-      name: aaa
